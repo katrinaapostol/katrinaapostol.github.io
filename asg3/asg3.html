@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang=”en”>
+    <head>
+        <meta charset="utf-8" />
+        <title> Katrina Apostol - CSE160 Assignment 3</title>
+
+        <style>/*
+            @font-face {
+                font-family: myFirstFont;
+                src: url(sansation_light.woff);
+            }*/
+            body {
+                font-family: Calibri, sans-serif;
+            }
+
+            #container {
+                position: relative;
+            }
+
+            #container canvas, #overlay {
+                position: absolute;
+            }
+
+            #overlay div {
+                margin-top: 50px;
+                margin-left: 5px;
+            }
+
+            canvas {
+                border: 1px solid black;
+            }
+
+            #settings {
+                top: 720px;
+                position: absolute;
+            }
+
+            #settings .column {
+                display: inline-block;
+                vertical-align: top;
+                margin-right: 20px;
+            }
+
+            #camera {
+                color: gray;
+            }
+
+            .new {
+                color: red;
+                vertical-align: top;
+            }
+        </style>
+
+        <script src="https://kit.fontawesome.com/6eb9895a2e.js" crossorigin="anonymous"></script>
+    </head>
+
+    <body onload="(new Engine('webgl')).init()">
+
+        <div id="container">
+            <canvas id="webgl" width="1000" height="700" tabindex="1">
+                Please use the browser supporting "canvas"
+            </canvas>
+            <div id="overlay">
+                <div id="camera"></div>
+            </div>
+        </div>
+
+        <div id="settings">
+            <b>Rendering options:</b>
+            <input id="renderHouse" type="checkbox"> Render house
+            &nbsp; | &nbsp;
+            <input id="renderAxis" type="checkbox"> Show axis (<span style="color:red;">X</span>, <span style="color:green;">Y</span>, <span style="color:blue;">Z</span>)
+            &nbsp; | &nbsp;
+            <input id="renderNormals" type="checkbox"> Render normals
+            &nbsp; | &nbsp;
+            <input id="toggleLighting" type="checkbox" checked> Toggle lighting
+
+            <br>
+            <b>Lighting options:</b>
+
+            Diffuse:
+            Red: <input id="diffuse-red" type="range" min="0.0" max="1.0" value="0.2" step="0.01" style="width:50px;">
+            Green: <input id="diffuse-green" type="range" min="0.0" max="1.0" value="0.2" step="0.01" style="width:50px;">
+            Blue: <input id="diffuse-blue" type="range" min="0.0" max="1.0" value="0.2" step="0.01" style="width:50px;">
+            &nbsp; | &nbsp;
+
+            Specular:
+            Red: <input id="specular-red" type="range" min="0.0" max="1.0" value="1.0" step="0.01" style="width:50px;">
+            Green: <input id="specular-green" type="range" min="0.0" max="1.0" value="1.0" step="0.01" style="width:50px;">
+            Blue: <input id="specular-blue" type="range" min="0.0" max="1.0" value="1.0" step="0.01" style="width:50px;">
+            Force: <input id="specular-n" type="range" min="1" max="128" value="10" step="1" style="width:50px;">
+
+            <br>
+            <b>Other options:</b>
+            <input id="automateAmbientColor" type="checkbox" checked> Automate ambient color
+            &nbsp; | &nbsp;
+            <input id="cycle" type="checkbox" checked> Day/Night cycle
+            &nbsp; | &nbsp;
+            <input id="night" type="button" value="Change daytime" disabled>
+            &nbsp; | &nbsp;
+            <input id="light-pos" type="button" value="Change light position" disabled>
+
+            <br><br>
+
+            <div>
+                <div class="column">
+                    <b>Camera controls:</b> (<span id="cam" style="color:green">selected</span>)
+                    <br>
+                    <small>Use WASD to select it</small>
+                    <ul>
+                        <li>Standard Movement: WASD</li>
+                        <li>Rotation: QE, mouse <i class="fas fa-mouse"></i></li>
+                    </ul>
+                </div>
+
+                <div class="column">
+                    <b>Animal controls:</b> (<span id="fox" style="color:red">unselected</span>)
+                    <br>
+                    <small>Use arrows to select it</small>
+                    <ul>
+                        <li>Jump: SPACE</li>
+                        <li>Run: SHIFT</li>
+                        <li>Breakdance: CTRL</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Libs -->
+        <script src="libs/webgl-utils.js"></script>
+        <script src="libs/webgl-debug.js"></script>
+        <script src="libs/cuon-utils.js"></script>
+        <script src="libs/cuon-matrix-cse160.js"></script>
+        <script src="libs/fpsmeter.min.js"></script>
+
+        <!-- Personal scripts -->
+        <!-- Data -->
+        <script src="data/world1.js"></script>
+
+        <!-- Utility -->
+        <script src="js/utils/utils.js"></script>
+        <script src="js/utils/Animation.js"></script>
+        <!-- Shapes -->
+        <script src="js/shapes/Shape.js"></script>
+        <script src="js/shapes/animals/Animal.js"></script>
+        <script src="js/shapes/animals/Fox.js"></script>
+        <script src="js/shapes/basic/Sphere.js"></script>
+        <script src="js/shapes/basic/Cube.js"></script>
+        <script src="js/shapes/basic/Sky.js"></script>
+        <script src="js/shapes/basic/Floor.js"></script>
+        <script src="js/shapes/basic/Axis.js"></script>
+        <!-- Events -->
+        <script src="js/events/Keyboard.js"></script>
+        <script src="js/events/Mouse.js"></script>
+        <script src="js/events/HtmlEvents.js"></script>
+        <!-- Core -->
+        <script src="js/core/Lighting.js"></script>
+        <script src="js/core/Camera.js"></script>
+        <script src="js/core/GameLoop.js"></script>
+        <script src="js/core/TextureManager.js"></script>
+        <script src="js/core/Engine.js"></script>
+        <!-- Main -->
+        <script src="js/World.js"></script>
+    </body>
+</html>
