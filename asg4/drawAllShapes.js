@@ -301,7 +301,7 @@ function drawAllShapes(){
 
    // Sky =====================================
    var sky = new Cube();
-  // sky.color = [.6, .9, .95, 1];
+   sky.color = [.6, .9, .95, 1];
    sky.textureNum = 1;
    if(g_normalOn) sky.textureNum = -3;
    sky.matrix.scale(-10,-10,-10);
@@ -309,9 +309,9 @@ function drawAllShapes(){
    sky.render();
 
 
-   // Floor ===================================
+   // Floor
    var floor = new Cube();
-  // floor.color = [.2, .9, .4, 1];
+   floor.color = [.2, .9, .4, 1];
    floor.textureNum = 0;
    floor.matrix.translate(0,-.25,0);
    floor.matrix.scale(10,0,10);
