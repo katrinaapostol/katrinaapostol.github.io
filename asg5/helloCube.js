@@ -12,6 +12,8 @@ function main() {
 
 	const canvas = document.querySelector( '#c' );
 	const renderer = new THREE.WebGLRenderer( { antialias: true, canvas } );
+	renderer.shadowMap.enabled = true;
+	renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 	const scene = new THREE.Scene();
     scene.fog = new THREE.Fog(0xcccccc, 5, 20);
     
@@ -30,9 +32,41 @@ function main() {
 
 		const color = 0xFFFFFF;
 		const intensity = 3;
-		const light = new THREE.DirectionalLight( color, intensity );
-		light.position.set( - 1, 2, 4 );
-		scene.add( light );
+		// Directional light – acts like sunlight
+
+		const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+		directionalLight.position.set(-2, 5, 2);
+		scene.add(directionalLight);
+		
+		// Spotlight
+		const spotLight = new THREE.SpotLight(0xFFD700, 5);
+		spotLight.position.set(0, 5, 5);
+		scene.add(spotLight);
+
+		// Ambient light – softens shadows, general brightness
+		const ambientLight = new THREE.AmbientLight(0x404040, 2); // Light gray
+		scene.add(ambientLight);
+
+		// Point light – emits light in all directions from a position
+		const pointLight = new THREE.PointLight(0xff69b4, 2, 50); // Pink, dreamy vibe
+		pointLight.position.set(2, 3, 1);
+		scene.add(pointLight);
+		pointLight.castShadow = true;
+		
+		const sphereSize = 0.1;
+		const pointLightHelper = new THREE.PointLightHelper(pointLight, sphereSize);
+		scene.add(pointLightHelper);
+		
+		directionalLight.intensity = 2.5;
+		ambientLight.intensity = 0.5;
+		pointLight.intensity = 4;
+		directionalLight.castShadow = true;
+		
+		directionalLight.shadow.mapSize.width = 1024;
+		directionalLight.shadow.mapSize.height = 1024;
+		directionalLight.shadow.camera.near = 0.5;
+		directionalLight.shadow.camera.far = 50;
+
 
 	}
 
@@ -74,12 +108,12 @@ function main() {
     }
 
     const materials = [
-		new THREE.MeshBasicMaterial( { map: loadColorTexture( './cat-1.jpg' ) } ),
-		new THREE.MeshBasicMaterial( { map: loadColorTexture( './cat-2.jpg' ) } ),
-		new THREE.MeshBasicMaterial( { map: loadColorTexture( './cat-3.jpg' ) } ),
-		new THREE.MeshBasicMaterial( { map: loadColorTexture( './cat-4.jpg' ) } ),
-		new THREE.MeshBasicMaterial( { map: loadColorTexture( './cat-5.jpg' ) } ),
-		new THREE.MeshBasicMaterial( { map: loadColorTexture( './cat-6.jpg' ) } ),
+		new THREE.MeshPhongMaterial( { map: loadColorTexture( './cat-1.jpg' ) } ),
+		new THREE.MeshPhongMaterial( { map: loadColorTexture( './cat-2.jpg' ) } ),
+		new THREE.MeshPhongMaterial( { map: loadColorTexture( './cat-3.jpg' ) } ),
+		new THREE.MeshPhongMaterial( { map: loadColorTexture( './cat-4.jpg' ) } ),
+		new THREE.MeshPhongMaterial( { map: loadColorTexture( './cat-5.jpg' ) } ),
+		new THREE.MeshPhongMaterial( { map: loadColorTexture( './cat-6.jpg' ) } ),
 	];
 
     const cubes = [
@@ -110,17 +144,23 @@ function main() {
         const objLoader = new OBJLoader();
 		const mtlLoader = new MTLLoader();
 		mtlLoader.load( './public/cat/cat.mtl', ( mtl ) => {
-
+		
 			mtl.preload();
+			
             for (const material of Object.values(mtl.materials)) {
                 material.side = THREE.DoubleSide;
             }
-			objLoader.setMaterials( mtl );
+			objLoader.setMaterials(mtl);
 			objLoader.load( './public/cat/cat.obj', ( root ) => {
                 root.position.set(6, -0.5, 0);  // move it to the right
                 root.scale.set(0.05, 0.05, 0.05);  // adjust size as needed
                 root.rotation.x = -Math.PI / 2;
-				scene.add( root );
+                
+                root.name = 'catModel';
+				root.userData.originalY = root.position.y;
+				root.userData.bobSpeed = 2;
+				
+				scene.add(root);
 			} );
 
 		} );
@@ -296,15 +336,6 @@ function main() {
         scene.add(sphere);
         orbitSpheres.push(sphere);
     }
-    
-    function resizeRendererToDisplaySize(renderer) {
-        const canvas = renderer.domElement;
-        const width = canvas.clientWidth;
-        const height = canvas.clientHeight;
-        const needResize = canvas.width !== width || canvas.height !== height;
-        if (needResize) renderer.setSize(width, height, false);
-        return needResize;
-    }
 
 
 	function render(time) {
@@ -326,6 +357,7 @@ function main() {
             const angle = time + i * (Math.PI / 4);
             sphere.position.set(-8 + Math.cos(angle) * 2, 0.5, Math.sin(angle) * 2 - 5);
         });
+        
 
         const cat = scene.getObjectByName('catModel');
         if (cat) {
@@ -349,8 +381,6 @@ function main() {
 	particleSystem.geometry.attributes.position.needsUpdate = true;
 
     }
-
-    requestAnimationFrame(render);
 }
 
 main();
